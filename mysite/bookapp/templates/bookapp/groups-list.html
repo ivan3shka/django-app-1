@@ -1,0 +1,25 @@
+{% extends 'bookapp/base.html' %}
+
+{% block title %}
+    Groups List
+{% endblock %}
+
+{% block body %}
+    <h1> Groups: </h1>
+    <div>
+        {% for group in  groups %}
+        <li>
+            {{ group.name }}
+            <ul>
+                {% for permission in group.permissions.all %}
+                    <li>
+                        {{ permission.name }}
+                        (<code>{{ permission.codename }}</code>)
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% empty %}
+        {% endfor %}
+    </div>
+{% endblock %}

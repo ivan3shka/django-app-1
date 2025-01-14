@@ -1,0 +1,21 @@
+{% extends 'bookapp/base.html' %}
+
+{% block title %}
+    Books List
+{% endblock %}
+
+{% block body %}
+    <h1> Books </h1>
+    <div> Books:
+        {% for book in  books %}
+        <li>
+            Name: {{ book.name }}
+            <p>Price: {{ book.price }}</p>
+            <p>Discount: {% firstof book.discount 'No discount' %}</p>
+            <p>Created at: {{ book.created_at }}</p>
+        </li>
+        {% empty %}
+        No books
+        {% endfor %}
+    </div>
+{% endblock %}
