@@ -1,5 +1,8 @@
 from django.urls import path
+
 from .views import book_index, groups_list, books_list, orders_list
+
+app_name  = 'bookapp'
 
 urlpatterns = [
     path('', book_index, name='index'),
