@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse
-
+import time
 
 def set_useragent_on_request_middleware(get_response):
     print('init call')
@@ -18,7 +18,7 @@ class CountRequestMiddleware:
         self.get_response = get_response
         self.request_count = 0
         self.responses_count = 0
-        self.exepition_count = 0
+        self.exception_count = 0
 
     def __call__(self, request):
         self.request_count += 1
@@ -29,13 +29,10 @@ class CountRequestMiddleware:
         return res
 
     def process_exception(self, request: HttpRequest, exception: Exception):
-        self.exepition_count += 1
-        print(f'exception_count: {self.exepition_count}')
+        self.exception_count += 1
+        print(f'exception_count: {self.exception_count}')
         return
 
-
-import time
-from django.http import HttpResponse
 
 
 class ThrottlingMiddleware:

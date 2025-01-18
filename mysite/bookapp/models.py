@@ -11,6 +11,7 @@ class Books(models.Model):
     discount = models.SmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     archived = models.BooleanField(default=False)
+    description =models.TextField(null=False, blank=True)
 
     def __str__(self) -> str:
         return f'Books(pk={self.pk}, name={self.name!r})'

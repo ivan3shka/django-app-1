@@ -18,4 +18,10 @@
         No books
         {% endfor %}
     </div>
+
+<div>
+    <a href="{% url 'bookapp:create_book' %}"
+    >Create a new book</a>
+</div>
+
 {% endblock %}
