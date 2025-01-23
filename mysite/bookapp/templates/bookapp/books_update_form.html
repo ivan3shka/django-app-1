@@ -1,0 +1,26 @@
+{% extends 'bookapp/base.html' %}
+
+{% block title %}
+    Update book
+{% endblock %}
+
+{% block body %}
+    <h1> Update a new book </h1>
+    <div>
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+        <button type="submit">
+          Update
+        </button>
+        </form>
+    </div>
+
+<div>
+    <a href="{% url 'bookapp:book_details' pk=object.pk %}"
+    >Back to details #{{ object.pk }}</a>
+</div>
+
+{% endblock %}

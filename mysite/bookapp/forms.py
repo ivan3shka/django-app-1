@@ -2,6 +2,8 @@ from django import forms
 from django.core import validators
 from .models import Books, Order
 
+from django.contrib.auth.models import Group
+
 
 #class BookForm(forms.Form):
 #    name = forms.CharField(max_length=100)
@@ -25,4 +27,11 @@ class CreateOrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = 'user', 'delivery_address', 'promocode', 'books'
+
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = 'name',
+
 
