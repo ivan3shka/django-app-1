@@ -1,0 +1,24 @@
+{% extends 'bookapp/base.html' %}
+
+{% block title %}
+    Book #{{ book.pk }}
+{% endblock %}
+
+{% block body %}
+    <h1>Book "<strong>{{ book.name }}</strong>"</h1>
+    <div>
+        <div>Description: <em>{{ book.description }}</em></div>
+        <div>Price: {{ book.price }}</div>
+        <div>Discount: {{ book.discount }}</div>
+        <div>Archived: {{ book.archived }}</div>
+    </div>
+    <div>
+        <a href="{% url 'bookapp:book_update' pk=book.pk %}">Update book</a>
+    </div>
+    <div>
+        <a href="{% url 'bookapp:book_delete' pk=book.pk %}">Archived book</a>
+    </div>
+    <div>
+        <a href="{% url 'bookapp:books_list' %}">Back to books list</a>
+    </div>
+{% endblock %}

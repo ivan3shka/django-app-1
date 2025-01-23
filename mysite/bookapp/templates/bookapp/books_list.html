@@ -9,7 +9,8 @@
     <div> Books:
         {% for book in  books %}
         <li>
-            Name: {{ book.name }}
+            <a href="{% url 'bookapp:book_details' pk=book.pk %}">
+                Name: {{ book.name }}</a>
             <p>Price: {{ book.price }}</p>
             <p>Discount: {% firstof book.discount 'No discount' %}</p>
             <p>Created at: {{ book.created_at }}</p>
