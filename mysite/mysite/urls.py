@@ -21,5 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('bookapp/', include('bookapp.urls')),
     path('req/', include('requestdataapp.urls')),
-    path('myauth/', include('myauth.urls')),
+    path('accounts/', include('myauth.urls')),
 ]

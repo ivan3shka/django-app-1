@@ -12,6 +12,7 @@ class Books(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     archived = models.BooleanField(default=False)
     description =models.TextField(null=False, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
         return f'Books(pk={self.pk}, name={self.name!r})'

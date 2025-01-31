@@ -1,4 +1,5 @@
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, \
+    Http404
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
@@ -15,7 +16,10 @@ from bookapp.forms import CreateBookForm, CreateOrderForm, GroupForm
 from bookapp.models import Books, Order
 
 from django.views import View
-
+from django.contrib.auth.mixins import (LoginRequiredMixin, # нельзя попасть, пока не проёдешь логин
+                                        PermissionRequiredMixin, # нельзя попасть, без нужного разрешения
+                                        UserPassesTestMixin, # позволяет в качестве проверки использовать любую функ
+                                        )
 # Create your views here.
 
 class BookIndexView(View):
@@ -63,28 +67,53 @@ class BooksListView(ListView):
     queryset = Books.objects.filter(archived=False)
 
 
-class OrdersListView(ListView):
+class OrdersListView(LoginRequiredMixin, ListView):
     queryset = (Order.objects.select_related('user').prefetch_related('books'))
 
 
-class OrderDetailsView(DetailView):
+class OrderDetailsView(PermissionRequiredMixin, DetailView):
     queryset = (Order.objects.select_related('user').prefetch_related('books'))
+    permission_required = 'bookapp.view_order' # показываем, какое разрешение нужно
 
 
-class CreateBookView(CreateView):
+class CreateBookView(CreateView, PermissionRequiredMixin):
+    #def test_func(self):
+    #    return self.request.user.is_superuser # возвращает bool
+    permission_required = 'books.add_books'
     model = Books
     fields = 'name', 'price', 'discount', 'description'
     success_url = reverse_lazy('bookapp:books_list')
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        response = super().form_valid(form)
+        return response
 
 
-class UpdateBookView(UpdateView):
+class UpdateBookView(UpdateView, PermissionRequiredMixin):
     model = Books
     fields = 'name', 'price', 'discount', 'description'
     template_name_suffix = '_update_form'
+    permission_required = 'bookapp.change_books'
 
     def get_success_url(self):# Потому что хотим вернуть страницу Details. Для этого нам нужен pk, а он не доступен на верхнем уровне
         return reverse('bookapp:book_details',
                        kwargs={'pk':self.object.pk}) #На object доступен тот объект, который сейчас обновляется
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            return Books.objects.all()  # Суперпользователь может редактировать любую книгу
+        return Books.objects.filter(
+            created_by=user)  # Остальные только свои книги
+
+    def dispatch(self, request, *args, **kwargs):
+        book = self.get_object()  # Получаем книгу
+        if not (
+                (request.user.has_perm('bookapp.change_books')
+                 and request.user == book.created_by)
+                or request.user.is_superuser):
+            raise Http404('You do not have permission to edit this book.')
+        return super().dispatch(request, *args, **kwargs)
 
 
 class DeleteBookView(DeleteView):
@@ -112,6 +141,7 @@ class UpdateOrderView(UpdateView):
     def get_success_url(self):# Потому что хотим вернуть страницу Details. Для этого нам нужен pk, а он не доступен на верхнем уровне
         return reverse('bookapp:order_details',
                        kwargs={'pk':self.object.pk})
+
 
 
 class DeleteOrderView(DeleteView):

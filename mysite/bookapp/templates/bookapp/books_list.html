@@ -20,9 +20,10 @@
         {% endfor %}
     </div>
 
-<div>
-    <a href="{% url 'bookapp:create_book' %}"
-    >Create a new book</a>
-</div>
+    <div>
+        {% if perms.bookapp.add_books %}
+            <a href="{% url 'bookapp:create_book' %}">Create a new book</a>
+        {% endif %}
+    </div>
 
 {% endblock %}
