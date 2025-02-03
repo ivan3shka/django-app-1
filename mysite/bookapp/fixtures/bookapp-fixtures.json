@@ -1,0 +1,160 @@
+[
+  {
+    "model": "bookapp.books",
+    "pk": 1,
+    "fields": {
+      "name": "Всадник без головы",
+      "price": "1000.00",
+      "discount": 10,
+      "created_at": "2025-01-13T12:53:59.773Z",
+      "archived": false,
+      "description": "",
+      "created_by": 1
+    }
+  },
+  {
+    "model": "bookapp.books",
+    "pk": 2,
+    "fields": {
+      "name": "Белый вождь",
+      "price": "700.00",
+      "discount": 25,
+      "created_at": "2025-01-13T12:53:59.773Z",
+      "archived": false,
+      "description": "",
+      "created_by": 1
+    }
+  },
+  {
+    "model": "bookapp.books",
+    "pk": 3,
+    "fields": {
+      "name": "Азбука",
+      "price": "500.00",
+      "discount": 45,
+      "created_at": "2025-01-13T12:53:59.773Z",
+      "archived": false,
+      "description": "",
+      "created_by": 1
+    }
+  },
+  {
+    "model": "bookapp.books",
+    "pk": 4,
+    "fields": {
+      "name": "Перси Джексон",
+      "price": "1231.00",
+      "discount": 0,
+      "created_at": "2025-01-18T01:38:13.945Z",
+      "archived": false,
+      "description": "Перси оказался немного Богом\r\nПоэтому должен спасти мир",
+      "created_by": 1
+    }
+  },
+  {
+    "model": "bookapp.books",
+    "pk": 6,
+    "fields": {
+      "name": "Гарри Поттер",
+      "price": "242.00",
+      "discount": 2,
+      "created_at": "2025-01-18T13:53:50.996Z",
+      "archived": false,
+      "description": "Книга о волшебнике",
+      "created_by": 1
+    }
+  },
+  {
+    "model": "bookapp.books",
+    "pk": 7,
+    "fields": {
+      "name": "Life of Pi",
+      "price": "1333.00",
+      "discount": 33,
+      "created_at": "2025-01-23T16:06:28.647Z",
+      "archived": false,
+      "description": "For school",
+      "created_by": 1
+    }
+  },
+  {
+    "model": "bookapp.books",
+    "pk": 10,
+    "fields": {
+      "name": "Book 1",
+      "price": "987.00",
+      "discount": 90,
+      "created_at": "2025-01-23T16:09:44.106Z",
+      "archived": false,
+      "description": "a new book",
+      "created_by": 1
+    }
+  },
+  {
+    "model": "bookapp.books",
+    "pk": 12,
+    "fields": {
+      "name": "Book Ex",
+      "price": "643.00",
+      "discount": 34,
+      "created_at": "2025-01-23T16:18:04.299Z",
+      "archived": false,
+      "description": "Try to save a new book",
+      "created_by": 1
+    }
+  },
+  {
+    "model": "bookapp.books",
+    "pk": 14,
+    "fields": {
+      "name": "2",
+      "price": "2.00",
+      "discount": 20,
+      "created_at": "2025-01-23T16:23:57.558Z",
+      "archived": true,
+      "description": "2",
+      "created_by": 1
+    }
+  },
+  {
+    "model": "bookapp.books",
+    "pk": 15,
+    "fields": {
+      "name": "from ivanyshka",
+      "price": "100.00",
+      "discount": 12,
+      "created_at": "2025-01-31T18:26:56.324Z",
+      "archived": false,
+      "description": "ivanyshka",
+      "created_by": 6
+    }
+  },
+  {
+    "model": "bookapp.order",
+    "pk": 2,
+    "fields": {
+      "delivery_address": "ul Yliza 12/2",
+      "promocode": "kolina",
+      "created_at": "2025-01-18T13:56:40.473Z",
+      "user": 1,
+      "books": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "model": "bookapp.order",
+    "pk": 3,
+    "fields": {
+      "delivery_address": "Argentina",
+      "promocode": "peso",
+      "created_at": "2025-01-18T13:59:15.028Z",
+      "user": 1,
+      "books": [
+        1,
+        4
+      ]
+    }
+  }
+]

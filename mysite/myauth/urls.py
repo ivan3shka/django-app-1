@@ -11,6 +11,7 @@ from .views import (
     MyLogoutPage,
     AboutMeView,
     RegisterView,
+    FooBarView,
 
     )
 
@@ -32,4 +33,5 @@ urlpatterns = [
 
     path('session/set/', set_session_view, name='set_session'),
     path('session/get/', get_session_view, name='get_session'),
+    path('foo-bar/', FooBarView.as_view(), name='foo_bar'),
 ]

@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, \
-    Http404
+    Http404, JsonResponse
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
@@ -149,7 +149,41 @@ class DeleteOrderView(DeleteView):
     success_url = reverse_lazy('bookapp:orders_list')
 
 
+class BooksDataExportView(View):
+    def get(self, request: HttpRequest) -> JsonResponse:
+        books = Books.objects.order_by('pk').all()
+        books_data = [
+            {
+            'pk': book.pk,
+            'name': book.name,
+            'price': book.price,
+            'archived': book.archived
+            }
+            for book in books
+        ]
+        return JsonResponse({'books': books_data})
 
+
+class OrdersExportView(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def handle_no_permission(self):
+        return JsonResponse({'error': 'Forbidden'}, status=403)
+
+    def get(self, request):
+        orders = Order.objects.order_by('pk').all()
+        orders_data = [
+            {
+                'id': order.pk,
+                'delivery_address': order.delivery_address,
+                'promocode': order.promocode,
+                'user': order.user.pk,
+                'books': list(order.books.values_list('pk', flat=True))
+            }
+            for order in orders
+        ]
+        return JsonResponse({'orders': orders_data})
 
 ############
 """Уже не пользуемся, но оставлю. Чтобы в случае чего были под рукой"""

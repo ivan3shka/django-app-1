@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import (
 
 
 from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.urls import reverse_lazy
@@ -90,4 +90,7 @@ class RegisterView(CreateView):
         login(request=self.request, user=user)
         return response # теперь при создании пользователя будет выполнятся аутентификация
 
+class FooBarView(View):
+    def get(self, request:HttpRequest) -> JsonResponse:
+        return JsonResponse({'foo': 'bar', 'spam': 'eggs'})
 
