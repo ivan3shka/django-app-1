@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block body %}
-    <h1> Update a new book </h1>
+    <h1> Update a book </h1>
     <div>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
             {{ form.as_p }}

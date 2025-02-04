@@ -14,6 +14,10 @@
             <p>Price: {{ book.price }}</p>
             <p>Discount: {% firstof book.discount 'No discount' %}</p>
             <p>Created at: {{ book.created_at }}</p>
+            
+            {% if book.preview %}
+            <img src="{{ book.preview.url }}" alt="{{ book.preview.name }}">
+            {% endif %}
         </li>
         {% empty %}
         No books

@@ -8,35 +8,20 @@ from django.contrib.auth.decorators import (
 
 
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, ListView, DetailView
+
+from .forms import ProfileUpdateForm
 from .models import Profile
 
 
 # Create your views here.
-
-#def login_view(request:HttpRequest) -> HttpResponse:
-#    if request.method == 'GET':
-#        if request.user.is_authenticated:
-#            return redirect('/admin/')
-#
-#        return render(request, 'muauth/login.html')
-#
-#    username = request.POST['username']
-#    password = request.POST['password']
-#
-#    user = authenticate(request, username=username, password=password)
-#
-#    if user is not None:
-#        login(request, user)
-#        return redirect('/admin/')
-#
-#    return render(request, 'myauth/login.html',
-#                 {'error': 'Invalid login credentials'})
 
 @user_passes_test(lambda u: u.is_superuser) # проверяет, супер юзер ли юзер. Можно вписать и другие функ
 def set_cookie_view(request:HttpRequest) -> HttpResponse:
@@ -68,9 +53,33 @@ class MyLogoutPage(View):
         return redirect('myauth:login')
 
 
-class AboutMeView(TemplateView):
+class AboutMeView(LoginRequiredMixin, TemplateView):
     template_name = 'myauth/about-me.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        username = self.request.GET.get('username', self.request.user.username)
+        user = get_object_or_404(User, username=username)
+
+        context['profile_user'] = user
+        context['form'] = ProfileUpdateForm(
+            instance=user.profile) if user == self.request.user else None
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        profile = request.user.profile
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('myauth:about-me')
+        return self.get(request, *args, **kwargs)
+
+class UserDetailsView(DetailView):
+    template_name = 'myauth/user_details.html'
+    model = User
+    context_object_name = 'user'
 
 class RegisterView(CreateView):
     form_class = UserCreationForm # создаёт user
@@ -88,9 +97,20 @@ class RegisterView(CreateView):
                             username=username,
                             password=password1) # делаем аутентификацию пользователю
         login(request=self.request, user=user)
-        return response # теперь при создании пользователя будет выполнятся аутентификация
+        return response # теперь при создании пользователя будет выполняться аутентификация
+
+
+class UsersListView(ListView):
+    model = User
+    template_name = 'myauth/users_list.html'
+    context_object_name = 'users'
+
+
 
 class FooBarView(View):
     def get(self, request:HttpRequest) -> JsonResponse:
         return JsonResponse({'foo': 'bar', 'spam': 'eggs'})
+
+
+
 
