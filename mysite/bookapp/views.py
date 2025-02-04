@@ -1,10 +1,9 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, \
     Http404, JsonResponse
-from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
 from django.views.generic import (
-                                TemplateView,
                                 ListView,
                                 DetailView,
                                 CreateView,
@@ -12,8 +11,8 @@ from django.views.generic import (
                                 DeleteView,
                                 )
 
-from bookapp.forms import CreateBookForm, CreateOrderForm, GroupForm
-from bookapp.models import Books, Order
+from bookapp.forms import GroupForm, BookForm
+from bookapp.models import Books, Order, BookImage
 
 from django.views import View
 from django.contrib.auth.mixins import (LoginRequiredMixin, # нельзя попасть, пока не проёдешь логин
@@ -55,7 +54,8 @@ class GroupsListView(View):
 
 class BookDetailsView(DetailView):
     template_name = 'bookapp/book-details-9.html'
-    model = Books
+    queryset = Books.objects.prefetch_related('images')
+    #model = Books
     context_object_name = 'book'
 
 
@@ -81,7 +81,7 @@ class CreateBookView(CreateView, PermissionRequiredMixin):
     #    return self.request.user.is_superuser # возвращает bool
     permission_required = 'books.add_books'
     model = Books
-    fields = 'name', 'price', 'discount', 'description'
+    fields = 'name', 'price', 'discount', 'description', 'preview'
     success_url = reverse_lazy('bookapp:books_list')
     def form_valid(self, form):
         form.instance.created_by = self.request.user
@@ -91,9 +91,19 @@ class CreateBookView(CreateView, PermissionRequiredMixin):
 
 class UpdateBookView(UpdateView, PermissionRequiredMixin):
     model = Books
-    fields = 'name', 'price', 'discount', 'description'
+    #fields = 'name', 'price', 'discount', 'description', 'preview'
+    form_class = BookForm
     template_name_suffix = '_update_form'
     permission_required = 'bookapp.change_books'
+
+    def form_valid(self, form):
+        res = super().form_valid(form)
+        for image in form.files.getlist('images'):
+            BookImage.objects.create(
+                book=self.object,
+                image=image,
+            )
+        return res
 
     def get_success_url(self):# Потому что хотим вернуть страницу Details. Для этого нам нужен pk, а он не доступен на верхнем уровне
         return reverse('bookapp:book_details',
@@ -189,71 +199,71 @@ class OrdersExportView(UserPassesTestMixin, View):
 """Уже не пользуемся, но оставлю. Чтобы в случае чего были под рукой"""
 ############
 
-def book_index(request: HttpRequest):
-    books = [('война и мир', 1000), ('всадник без головы', 500), ('нарния', 700),
-             ('колобок', 30)]
-    date = '09/01/2025'
-    count = 0
-    context = {
-        'books': books,
-        'date': date,
-        'caunt': count
-    }
-    return render(request, 'bookapp/book-index.html',
-                  context=context)
-
-def groups_list(request: HttpRequest):
-    context = {
-        'groups': Group.objects.prefetch_related('permissions').all()
-    }
-    return render(request, 'bookapp/groups-list.html',
-                  context=context)
-
-def books_list(request: HttpRequest):
-    context = {
-        'books': Books.objects.all(),
-    }
-    return render(request, 'bookapp/books_list.html',
-                  context=context)
-
-def create_book(request: HttpRequest) -> HttpResponse:
-    if request.method == 'POST':
-        form = CreateBookForm(request.POST)
-        if form.is_valid():
-            #name = form.cleaned_data['name']
-            #price = form.cleaned_data['price']
-            #Books.objects.create(name, price) -> Это вытаскивает данные из словаря, но у нас совпадают имена в словаре и которые надо, поэтому нормально
-            #Books.objects.create(**form.cleaned_data)
-            form.save()
-            url = reverse('bookapp:books_list')
-            return redirect(url)
-    else:
-        form = CreateBookForm()
-
-    context = {
-        'form': form
-    }
-
-    return render(request, 'bookapp/create-book.html',
-                  context=context)
-
-def create_order(request: HttpRequest) -> HttpResponse:
-    if request.method == 'POST':
-        form = CreateOrderForm(request.POST)
-        if form.is_valid():
-            # name = form.cleaned_data['name']
-            # price = form.cleaned_data['price']
-            # Books.objects.create(name, price) -> Это вытаскивает данные из словаря, но у нас совпадают имена в словаре и которые надо, поэтому нормально
-            # Books.objects.create(**form.cleaned_data)
-            form.save()
-            url = reverse('bookapp:orders_list')
-            return redirect(url)
-    else:
-        form = CreateOrderForm()
-
-    context = {
-        'form': form
-    }
-
-    return render(request, 'bookapp/create-order.html',
-                  context=context)
+# def book_index(request: HttpRequest):
+#     books = [('война и мир', 1000), ('всадник без головы', 500), ('нарния', 700),
+#              ('колобок', 30)]
+#     date = '09/01/2025'
+#     count = 0
+#     context = {
+#         'books': books,
+#         'date': date,
+#         'caunt': count
+#     }
+#     return render(request, 'bookapp/book-index.html',
+#                   context=context)
+#
+# def groups_list(request: HttpRequest):
+#     context = {
+#         'groups': Group.objects.prefetch_related('permissions').all()
+#     }
+#     return render(request, 'bookapp/groups-list.html',
+#                   context=context)
+#
+# def books_list(request: HttpRequest):
+#     context = {
+#         'books': Books.objects.all(),
+#     }
+#     return render(request, 'bookapp/books_list.html',
+#                   context=context)
+#
+# def create_book(request: HttpRequest) -> HttpResponse:
+#     if request.method == 'POST':
+#         form = CreateBookForm(request.POST)
+#         if form.is_valid():
+#             #name = form.cleaned_data['name']
+#             #price = form.cleaned_data['price']
+#             #Books.objects.create(name, price) -> Это вытаскивает данные из словаря, но у нас совпадают имена в словаре и которые надо, поэтому нормально
+#             #Books.objects.create(**form.cleaned_data)
+#             form.save()
+#             url = reverse('bookapp:books_list')
+#             return redirect(url)
+#     else:
+#         form = CreateBookForm()
+#
+#     context = {
+#         'form': form
+#     }
+#
+#     return render(request, 'bookapp/create-book.html',
+#                   context=context)
+#
+# def create_order(request: HttpRequest) -> HttpResponse:
+#     if request.method == 'POST':
+#         form = CreateOrderForm(request.POST)
+#         if form.is_valid():
+#             # name = form.cleaned_data['name']
+#             # price = form.cleaned_data['price']
+#             # Books.objects.create(name, price) -> Это вытаскивает данные из словаря, но у нас совпадают имена в словаре и которые надо, поэтому нормально
+#             # Books.objects.create(**form.cleaned_data)
+#             form.save()
+#             url = reverse('bookapp:orders_list')
+#             return redirect(url)
+#     else:
+#         form = CreateOrderForm()
+#
+#     context = {
+#         'form': form
+#     }
+#
+#     return render(request, 'bookapp/create-order.html',
+#                   context=context)

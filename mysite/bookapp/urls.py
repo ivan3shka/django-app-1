@@ -7,7 +7,6 @@ from .views import (
     GroupsListView,
     BookDetailsView,
     BooksListView,
-    create_order,
     OrdersListView,
     OrderDetailsView,
     CreateBookView,

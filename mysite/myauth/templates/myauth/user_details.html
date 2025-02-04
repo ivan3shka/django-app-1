@@ -1,11 +1,11 @@
 {% extends 'myauth/base.html' %}
 
 {% block title %}
-    About me
+    About user {{ user.username }}
 {% endblock %}
 
 {% block body %}
-    <h1>User info:</h1>
+    <h1>User {{ user.username }} info:</h1>
     {% if user.is_authenticated %}
         <h2>Detail</h2>
         <p>Username: {{ user.username }}</p>
@@ -18,15 +18,6 @@
             {% else %}
             No avatar
             {% endif %}
-        </div>
-        <div>
-            {% if user.is_staff or user == user.profile.user %}
-            <form action="{% url 'myauth:about-me' %}" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Upload avatar</button>
-            </form>
-        {% endif %}
         </div>
     {% endif %}
 {% endblock %}

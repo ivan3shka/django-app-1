@@ -1,26 +1,36 @@
+from symtable import Class
+
 from django import forms
 from django.core import validators
-from .models import Books, Order
+from .models import Books, Order, BookImage
 
 from django.contrib.auth.models import Group
 
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
 
-#class BookForm(forms.Form):
-#    name = forms.CharField(max_length=100)
-#    price = forms.DecimalField(min_value=10, max_value=9999, decimal_places=2)
-#    description = forms.CharField(label='Book description',
-#                                  widget=forms.Textarea(attrs={'rows':5,
-#                                                               'cols':30}),
-#                                  validators=[validators.RegexValidator(
-#                                      regex=r'greate',
-#                                      message='Must contain word "greate"'
-#                                  )])
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = single_file_clean(data, initial)
+        return result
 
 
-class CreateBookForm(forms.ModelForm):
+class BookForm(forms.ModelForm):
+    images =  MultipleFileField(label='Select files', required=False)
     class Meta:
         model = Books
-        fields = 'name', 'price', 'description','discount'
+        fields = 'name', 'price', 'description','discount', 'preview'
+    """
+    позволяем загрузить сразу несколько изображений
+    """
 
 
 class CreateOrderForm(forms.ModelForm):

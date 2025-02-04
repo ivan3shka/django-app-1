@@ -11,6 +11,21 @@
         <div>Price: {{ book.price }}</div>
         <div>Discount: {{ book.discount }}</div>
         <div>Archived: {{ book.archived }}</div>
+        {% if book.preview %}
+        <img src="{{ book.preview.url }}" alt="{{ book.preview.name }}">
+        {% endif %}
+
+        <h3>Images</h3>
+        <div>
+            {% for img in book.images.all %}
+                <div>
+                    <img src="{{ img.image.url }}" alt="{{ img.image.name }}">
+                    <div>{{ img.description }}</div>
+                </div>
+            {% empty %}
+            No images
+            {% endfor %}
+        </div>
     </div>
     <div>
         <a href="{% url 'bookapp:book_update' pk=book.pk %}">Update book</a>

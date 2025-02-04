@@ -5,7 +5,8 @@ from django.http import HttpRequest
 # Register your models here.
 
 from .admin_mixins import ExportAsCSVMixins
-from .models import Books, Order
+from .models import Books, Order, BookImage
+
 
 @admin.action(description='Archive book')
 def mark_archived(modeladmin: admin.ModelAdmin, request: HttpRequest,
@@ -17,8 +18,11 @@ def mark_unarchived(modeladmin: admin.ModelAdmin, request: HttpRequest,
                   queryset: QuerySet): #Создаёт действие, которое можно будет в админке выполнить ля всех выделенных
     queryset.update(archived=False)
 
-class OrderInline(admin.TabularInline):
+class OrderInline(admin.StackedInline):
     model = Books.orders.through
+
+class BookInline(admin.TabularInline):
+    model = BookImage
 
 @admin.register(Books)
 class BooksAdmin(admin.ModelAdmin, ExportAsCSVMixins):
@@ -29,6 +33,7 @@ class BooksAdmin(admin.ModelAdmin, ExportAsCSVMixins):
     ]
     inlines = [
         OrderInline,
+        BookInline,
     ]
     fieldsets = [
         (None, {
@@ -37,6 +42,9 @@ class BooksAdmin(admin.ModelAdmin, ExportAsCSVMixins):
         ('Price options', { #Price options - название секции
             'fields': ('price', 'discount',), #fields - то что входит в секцию
             'classes': ('collapse', 'wide')  #classes- доп возможности секции, collapse - скрывает секцию, wide - добавит белого пространства
+        }),
+        ('Images', {
+            'fields': ('preview', ),
         }),
         ('Extra options', {
             'fields': ('archived', ),
