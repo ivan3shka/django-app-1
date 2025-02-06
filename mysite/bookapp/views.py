@@ -31,7 +31,8 @@ class BookIndexView(View):
         context = {
             'books': books,
             'date': date,
-            'caunt': count
+            'caunt': count,
+            'items': 3,
         }
         return render(request, 'bookapp/book-index.html',
                       context=context)

@@ -11,7 +11,10 @@ from .views import (
     MyLogoutPage,
     AboutMeView,
     RegisterView,
-    FooBarView, UsersListView, UserDetailsView,
+    FooBarView,
+    UsersListView,
+    UserDetailsView,
+    HelloView,
 
 )
 
@@ -27,6 +30,7 @@ urlpatterns = [
     path('logout/', MyLogoutPage.as_view(), name='logout'),
     path('about-me/', AboutMeView.as_view(), name='about-me'),
     path('users/', UsersListView.as_view(), name='users_list'),
+    path('hello/', HelloView.as_view(), name='hello'),
     path('users/<int:pk>', UserDetailsView.as_view(), name='user_details'),
     path('register/', RegisterView.as_view(), name='register'),
 
