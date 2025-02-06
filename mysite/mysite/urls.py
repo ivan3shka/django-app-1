@@ -18,13 +18,17 @@ from django.conf import settings # чтобы проверить, в каком 
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path, include
+from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('bookapp/', include('bookapp.urls')),
     path('req/', include('requestdataapp.urls')),
-    path('accounts/', include('myauth.urls')),
 ]
+
+urlpatterns += i18n_patterns(
+    path('accounts/', include('myauth.urls')),
+    path('bookapp/', include('bookapp.urls')),
+)
 
 if settings.DEBUG:
     urlpatterns.extend(

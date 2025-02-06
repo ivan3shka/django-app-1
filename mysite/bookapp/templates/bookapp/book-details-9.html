@@ -1,39 +1,49 @@
 {% extends 'bookapp/base.html' %}
 
+{% load i18n %}
+
 {% block title %}
-    Book #{{ book.pk }}
+    {% translate 'Book' %} #{{ book.pk }}
 {% endblock %}
 
 {% block body %}
-    <h1>Book "<strong>{{ book.name }}</strong>"</h1>
     <div>
-        <div>Description: <em>{{ book.description }}</em></div>
-        <div>Price: {{ book.price }}</div>
-        <div>Discount: {{ book.discount }}</div>
-        <div>Archived: {{ book.archived }}</div>
+        {% blocktranslate count imgs_count=books.images.all|length %}
+            There is only one img
+            {% plural %}
+            There are {{ imgs_count }} images
+        {% endblocktranslate %}
+    </div>
+    <h1>{% translate 'Book' %} <strong>{{ book.name }}</strong>"</h1>
+    <div>
+        <div>{% translate 'Description' %}: <em>{{ book.description }}</em></div>
+        <div>{% translate 'Price' %}: {{ book.price }}</div>
+        <div>{% translate 'Discount' %}: {{ book.discount }}</div>
+        <div>{% translate 'Archived' %}: {{ book.archived }}</div>
         {% if book.preview %}
         <img src="{{ book.preview.url }}" alt="{{ book.preview.name }}">
         {% endif %}
 
-        <h3>Images</h3>
+        <h3>{% translate 'Images' %}</h3>
         <div>
+
             {% for img in book.images.all %}
                 <div>
                     <img src="{{ img.image.url }}" alt="{{ img.image.name }}">
                     <div>{{ img.description }}</div>
                 </div>
             {% empty %}
-            No images
+            {% translate 'No images' %}
             {% endfor %}
         </div>
     </div>
     <div>
-        <a href="{% url 'bookapp:book_update' pk=book.pk %}">Update book</a>
+        <a href="{% url 'bookapp:book_update' pk=book.pk %}">{% translate 'Update book' %}</a>
     </div>
     <div>
-        <a href="{% url 'bookapp:book_delete' pk=book.pk %}">Archived book</a>
+        <a href="{% url 'bookapp:book_delete' pk=book.pk %}">{% translate 'Archived book' %}</a>
     </div>
     <div>
-        <a href="{% url 'bookapp:books_list' %}">Back to books list</a>
+        <a href="{% url 'bookapp:books_list' %}">{% translate 'Back to book list' %}</a>
     </div>
 {% endblock %}

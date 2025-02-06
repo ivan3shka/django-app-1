@@ -20,9 +20,27 @@ from django.views.generic import TemplateView, CreateView, ListView, DetailView
 from .forms import ProfileUpdateForm
 from .models import Profile
 
+from django.utils.translation import gettext_lazy as _, ngettext
 
 # Create your views here.
 
+class HelloView(View):
+    message = _('welcome hellow world')
+
+    def get(self, requesst: HttpRequest) -> HttpResponse:
+        items_str = requesst.GET.get('items') or 0
+        items = int(items_str)
+
+        books_line = ngettext(
+            'one book',
+            '{count} books',
+            items
+        )
+        books_line = books_line.format(count=items)
+        return HttpResponse(
+            f'<h1>{self.message}</h1>'
+            f'\n<h2>{books_line}</h2>',
+        )
 @user_passes_test(lambda u: u.is_superuser) # проверяет, супер юзер ли юзер. Можно вписать и другие функ
 def set_cookie_view(request:HttpRequest) -> HttpResponse:
     response = HttpResponse('Cookie set ')

@@ -1,0 +1,165 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-06 18:01+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: bookapp/models.py:18 bookapp/templates/bookapp/book-details-9.html:6
+#: bookapp/templates/bookapp/book-details-9.html:17
+#, fuzzy
+#| msgid "Books"
+msgid "Book"
+msgstr "Books"
+
+#: bookapp/models.py:19 bookapp/templates/bookapp/books_list.html:10
+msgid "Books"
+msgstr "Books"
+
+#: bookapp/models.py:51
+msgid "Order"
+msgstr "Order"
+
+#: bookapp/models.py:52
+msgid "Orders"
+msgstr "Orders"
+
+#: bookapp/templates/bookapp/book-details-9.html:11
+#, python-format
+msgid ""
+"\n"
+"            There is only one img\n"
+"            "
+msgid_plural ""
+"\n"
+"            There are %(imgs_count)s images\n"
+"        "
+msgstr[0] ""
+msgstr[1] ""
+
+#: bookapp/templates/bookapp/book-details-9.html:19
+msgid "Description"
+msgstr ""
+
+#: bookapp/templates/bookapp/book-details-9.html:20
+#: bookapp/templates/bookapp/books_list.html:24
+msgid "Price"
+msgstr "Price"
+
+#: bookapp/templates/bookapp/book-details-9.html:21
+#: bookapp/templates/bookapp/books_list.html:26
+msgid "Discount"
+msgstr "Discount"
+
+#: bookapp/templates/bookapp/book-details-9.html:22
+msgid "Archived"
+msgstr ""
+
+#: bookapp/templates/bookapp/book-details-9.html:27
+msgid "Images"
+msgstr ""
+
+#: bookapp/templates/bookapp/book-details-9.html:36
+msgid "No images"
+msgstr ""
+
+#: bookapp/templates/bookapp/book-details-9.html:41
+#, fuzzy
+#| msgid "one book"
+#| msgid_plural "{count} books"
+msgid "Update book"
+msgstr "One book"
+
+#: bookapp/templates/bookapp/book-details-9.html:44
+msgid "Archived book"
+msgstr ""
+
+#: bookapp/templates/bookapp/book-details-9.html:47
+msgid "Back to book list"
+msgstr ""
+
+#: bookapp/templates/bookapp/books_list.html:6
+msgid "Books List"
+msgstr "Books List"
+
+#: bookapp/templates/bookapp/books_list.html:14
+#, python-format
+msgid ""
+"\n"
+"                    There is only one book\n"
+"                    "
+msgid_plural ""
+"\n"
+"                    There are %(book_count)s books\n"
+"                "
+msgstr[0] ""
+msgstr[1] ""
+
+#: bookapp/templates/bookapp/books_list.html:23
+msgctxt "book name"
+msgid "Name"
+msgstr "Name"
+
+#: bookapp/templates/bookapp/books_list.html:25
+msgid "No discount"
+msgstr "No discount"
+
+#: bookapp/templates/bookapp/books_list.html:27
+msgid "Created at"
+msgstr "Created at"
+
+#: bookapp/templates/bookapp/books_list.html:36
+msgid "Create a new book"
+msgstr "Create a new book"
+
+#: bookapp/templates/bookapp/books_list.html:41
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "         <h3>'No books'</h3>\n"
+#| "        <a href=\"%(create_book_url)s\">Create a new one</a>\n"
+#| "        "
+msgid ""
+"\n"
+"                 <h3>No books</h3>\n"
+"                <a href=\"%(create_book_url)s\">Create a new one</a>\n"
+"            "
+msgstr ""
+"\n"
+"         <h3>'Книг нет'</h3>\n"
+"        <a href=\"%(create_book_url)s\">Добавить новую</a>\n"
+"        "
+
+#: myauth/views.py:28
+#, fuzzy
+#| msgid "welcome hello world"
+msgid "welcome hellow world"
+msgstr "hello world"
+
+#: myauth/views.py:35
+#, python-brace-format
+msgid "one book"
+msgid_plural "{count} books"
+msgstr[0] "One book"
+msgstr[1] "{count} books!"
+
+#: mysite/settings.py:132
+msgid "English"
+msgstr "English"
+
+#: mysite/settings.py:133
+msgid "Russian"
+msgstr "Russian"

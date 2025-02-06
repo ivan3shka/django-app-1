@@ -1,32 +1,47 @@
 {% extends 'bookapp/base.html' %}
 
+{% load i18n %}
+
 {% block title %}
-    Books List
+   {% translate 'Books List' %}
 {% endblock %}
 
 {% block body %}
-    <h1> Books </h1>
-    <div> Books:
-        {% for book in  books %}
-        <li>
-            <a href="{% url 'bookapp:book_details' pk=book.pk %}">
-                Name: {{ book.name }}</a>
-            <p>Price: {{ book.price }}</p>
-            <p>Discount: {% firstof book.discount 'No discount' %}</p>
-            <p>Created at: {{ book.created_at }}</p>
-            
-            {% if book.preview %}
-            <img src="{{ book.preview.url }}" alt="{{ book.preview.name }}">
-            {% endif %}
-        </li>
-        {% empty %}
-        No books
-        {% endfor %}
-    </div>
-
+    <h1> {% translate 'Books' %} </h1>
     <div>
-        {% if perms.bookapp.add_books %}
-            <a href="{% url 'bookapp:create_book' %}">Create a new book</a>
+        {% if books %}
+            <div>
+                {% blocktranslate count book_count=books|length %}
+                    There is only one book
+                    {% plural %}
+                    There are {{ book_count }} books
+                {% endblocktranslate %}
+            </div>
+            {% for book in  books %}
+            <li>
+                <a href="{% url 'bookapp:book_details' pk=book.pk %}">
+                    {% translate 'Name' context 'book name'%}: {{ book.name }}</a>
+                <p>{% translate 'Price' %}: {{ book.price }}</p>
+                {% translate 'No discount' as no_discount %}
+                <p>{% translate 'Discount' %}: {% firstof book.discount no_discount %}</p>
+                <p>{% translate 'Created at' %}: {{ book.created_at }}</p>
+
+                {% if book.preview %}
+                <img src="{{ book.preview.url }}" alt="{{ book.preview.name }}">
+                {% endif %}
+            </li>
+            {% endfor %}
+            <div>
+                {% if perms.bookapp.add_books %}
+                    <a href="{% url 'bookapp:create_book' %}">{% translate 'Create a new book' %}</a>
+                {% endif %}
+            </div>
+        {% else %}
+            {% url 'bookapp:create_book' as create_book_url %}
+            {% blocktranslate %}
+                 <h3>No books</h3>
+                <a href="{{  create_book_url  }}">Create a new one</a>
+            {% endblocktranslate %}
         {% endif %}
     </div>
 
