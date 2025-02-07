@@ -1,6 +1,8 @@
 from venv import create
 
-from django.urls import path
+from django.urls import path, include
+
+from rest_framework.routers import DefaultRouter
 
 from .views import (
     BookIndexView,
@@ -17,14 +19,21 @@ from .views import (
     DeleteOrderView,
     BooksDataExportView,
     OrdersExportView,
+    BookViewSet,
+    OrderViewSet,
 
 )
 
 app_name  = 'bookapp'
 
+routers = DefaultRouter()
+routers.register('books', BookViewSet)
+routers.register('orders', OrderViewSet)
+
 urlpatterns = [
     path('', BookIndexView.as_view(), name='index'),
     path('groups/', GroupsListView.as_view(), name='groups_list'),
+    path('api/', include(routers.urls)),
     path('books/', BooksListView.as_view(), name='books_list'),
     path('books/<int:pk>/', BookDetailsView.as_view(), name='book_details'),
     path('books/create/', CreateBookView.as_view(), name='create_book'),

@@ -19,7 +19,58 @@ from django.contrib.auth.mixins import (LoginRequiredMixin, # нельзя по�
                                         PermissionRequiredMixin, # нельзя попасть, без нужного разрешения
                                         UserPassesTestMixin, # позволяет в качестве проверки использовать любую функ
                                         )
+
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from bookapp.serializers import BookSerializer, OrderSerializer
+
+
 # Create your views here.
+
+class BookViewSet(ModelViewSet):
+    queryset = Books.objects.all()
+    serializer_class = BookSerializer
+    filter_backends = [
+        SearchFilter,
+        #DjangoFilterBackend,
+        OrderingFilter,
+
+    ]
+    search_fields = ['name', 'description']
+    filterset_fields = [
+        'name',
+        'description',
+        'price',
+        'discount',
+        'archived',
+    ]
+    ordering_fields = [
+        'name',
+        'price',
+        'discount',
+    ]
+
+
+class OrderViewSet(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    filter_backends = [
+        #SearchFilter,
+        DjangoFilterBackend,
+        OrderingFilter,
+    ]
+    search_fields = ['promocode', 'delivery_address']
+    filterset_fields = [
+        'user',
+        'delivery_address',
+        'books',
+    ]
+    ordering_fields = [
+        'user',
+        'delivery_address',
+    ]
+
 
 class BookIndexView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
