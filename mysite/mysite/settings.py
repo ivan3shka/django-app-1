@@ -17,6 +17,7 @@ from django.conf.global_settings import LOGIN_REDIRECT_URL, MEDIA_URL, \
 from django.urls import reverse_lazy
 
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.settings import SPECTACULAR_DEFAULTS
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,9 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admindocs',
 
     'rest_framework',
     'django_filters',
+    'drf_spectacular',
     
     'bookapp.apps.BookappConfig',
     'requestdataapp.apps.RequestdataappConfig',
@@ -65,6 +68,7 @@ MIDDLEWARE = [
     #'requestdataapp.middlewares.CountRequestMiddleware',
     #'requestdataapp.middlewares.ThrottlingMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django.contrib.admindocs.middleware.XViewMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -117,6 +121,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+SPECTACULAR_SETTNGS = {
+    'TITLE': 'My Site Project API',
+    'DESCRIPTION': 'My site with book app and custom auth',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -165,4 +175,5 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
