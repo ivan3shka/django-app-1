@@ -1,3 +1,8 @@
+"""
+В этом модуле лежат различные наборы представлений.
+
+Разные view интернет-магазина по товарам, заказам и тд
+"""
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, \
     Http404, JsonResponse
 from django.shortcuts import render, redirect, reverse
@@ -19,7 +24,7 @@ from django.contrib.auth.mixins import (LoginRequiredMixin, # нельзя по�
                                         PermissionRequiredMixin, # нельзя попасть, без нужного разрешения
                                         UserPassesTestMixin, # позволяет в качестве проверки использовать любую функ
                                         )
-
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -28,7 +33,12 @@ from bookapp.serializers import BookSerializer, OrderSerializer
 
 # Create your views here.
 
+@extend_schema(description='Books CRUD view')
 class BookViewSet(ModelViewSet):
+    """
+    Набор представлений для действий над Books
+    Полный CRUD для сущностей книги
+    """
     queryset = Books.objects.all()
     serializer_class = BookSerializer
     filter_backends = [
@@ -50,6 +60,18 @@ class BookViewSet(ModelViewSet):
         'price',
         'discount',
     ]
+
+    @extend_schema(
+        summary='get one book by id',
+        description='Retrieves **book**, returns 404 if not found',
+        responses={
+            200: BookSerializer,
+            404: OpenApiResponse(
+                description='Empty response, book by id not found'),
+        }
+    )
+    def retrieve(self, *args, **kwargs):
+        return super().retrieve( *args, **kwargs)
 
 
 class OrderViewSet(ModelViewSet):

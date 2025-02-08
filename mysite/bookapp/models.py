@@ -14,6 +14,12 @@ def book_preview_directory_path(instance: 'Books', filename: str) -> str:
     )
 
 class Books(models.Model):
+    """
+    Модель Books представляет книгу,
+    которую можно продавать в интернет-магазине
+
+    Заказы тут: :model:`bookapp.Order`
+    """
     class Meta:
         verbose_name = _('Book')
         verbose_name_plural = _('Books')
@@ -56,7 +62,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     books = models.ManyToManyField(Books, related_name='orders')
     receipt = models.FileField(null=True, upload_to='orders/receipts/')
-    """
+    """ 
     receipt - загружает чек после завершения заказа.
     upload_to - путь, куда загружать файлы
     """
