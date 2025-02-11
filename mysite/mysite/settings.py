@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 
 from django.conf.global_settings import LOGIN_REDIRECT_URL, MEDIA_URL, \
-    MEDIA_ROOT, LOCALE_PATHS
+    MEDIA_ROOT, LOCALE_PATHS, LOGGING
 from django.urls import reverse_lazy
 
 from django.utils.translation import gettext_lazy as _
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'requestdataapp.apps.RequestdataappConfig',
     'myauth.apps.MyauthConfig',
     'myapiapp.apps.MyapiappConfig',
+    'blogapp.apps.BlogappConfig',
 ]
 
 MIDDLEWARE = [
@@ -176,4 +177,26 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+LOGGING = {
+    'version':1,
+    'filters': {
+        'require_debug_true': {
+            '()':'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends':{
+        'level': 'DEBUG',
+        'handlers': ['console']
+        },
+    },
 }
