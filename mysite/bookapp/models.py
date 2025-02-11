@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.functions import TruncYear
 
 from django.utils.translation import gettext_lazy as _
 
@@ -24,12 +25,12 @@ class Books(models.Model):
         verbose_name = _('Book')
         verbose_name_plural = _('Books')
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, db_index=True)
     price = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     discount = models.SmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     archived = models.BooleanField(default=False)
-    description =models.TextField(null=False, blank=True)
+    description =models.TextField(null=False, blank=True, db_index=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT)
     preview = models.ImageField(null=True, blank=True,
                                 upload_to=book_preview_directory_path)
