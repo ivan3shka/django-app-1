@@ -3,6 +3,7 @@
 
 Разные view интернет-магазина по товарам, заказам и тд
 """
+import logging
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, \
     Http404, JsonResponse
 from django.shortcuts import render, redirect, reverse
@@ -32,6 +33,7 @@ from bookapp.serializers import BookSerializer, OrderSerializer
 
 
 # Create your views here.
+log = logging.getLogger(__name__)
 
 @extend_schema(description='Books CRUD view')
 class BookViewSet(ModelViewSet):
@@ -107,6 +109,8 @@ class BookIndexView(View):
             'caunt': count,
             'items': 3,
         }
+        log.debug('Books for shop index: %s', books)
+        log.info('Rendering book index')
         return render(request, 'bookapp/book-index.html',
                       context=context)
 
