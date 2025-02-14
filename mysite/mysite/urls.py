@@ -51,3 +51,6 @@ if settings.DEBUG:
     urlpatterns.extend(
         static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) #MEDIA_URL, MEDIA_ROOT надо объявить в настройках
     )
+    urlpatterns.append(
+       path('__debug__/', include('debug_toolbar.urls'))
+    )

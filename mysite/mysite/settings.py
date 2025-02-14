@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 
 from django.conf.global_settings import LOGIN_REDIRECT_URL, MEDIA_URL, \
-    MEDIA_ROOT, LOCALE_PATHS, LOGGING
+    MEDIA_ROOT, LOCALE_PATHS, LOGGING, INTERNAL_IPS
 from django.urls import reverse_lazy
 
 from django.utils.translation import gettext_lazy as _
@@ -32,8 +32,21 @@ SECRET_KEY = 'django-insecure-x*51(e$z0mj7=t43!&_)&o&&xh*ludug$qx-(fcp+pkkoc#$p3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '0.0.0.0',
+    '127.0.0.1',
+]
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
+if DEBUG:
+    import socket
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS.append('10.0.0.2')
+    INTERNAL_IPS.extend(
+        [ip[: ip.rfind('.')] + '.1' for ip in ips]
+    )
 
 # Application definition
 
@@ -49,6 +62,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'drf_spectacular',
+    'debug_toolbar',
     
     'bookapp.apps.BookappConfig',
     'requestdataapp.apps.RequestdataappConfig',
@@ -65,6 +79,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     #'requestdataapp.middlewares.set_useragent_on_request_middleware',
     #'requestdataapp.middlewares.CountRequestMiddleware',
     #'requestdataapp.middlewares.ThrottlingMiddleware',
@@ -144,10 +159,10 @@ USE_L10ON = True
 
 LOCALE_PATHS = [BASE_DIR /'locale']
 
-LANGUAGES = [
-    ('en', _('English')),
-    ('ru', _('Russian')),
-]
+# LANGUAGES = [
+#     ('en', _('English')),
+#     ('ru', _('Russian')),
+# ]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -179,24 +194,36 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+LOGFILE_NAME = BASE_DIR /'log.txt'
+LOGFILE_SIZE =  1 * 1024 * 1024
+LOGFILE_COUNT = 3
+
 LOGGING = {
     'version':1,
-    'filters': {
-        'require_debug_true': {
-            '()':'django.utils.log.RequireDebugTrue',
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s '
         },
     },
     'handlers': {
         'console': {
-            'level': 'DEBUG',
-            'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'logfile': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGFILE_NAME,
+            'maxBytes': LOGFILE_SIZE,
+            'backupCount': LOGFILE_COUNT,
+            'formatter': 'verbose',
         },
     },
-    'loggers': {
-        'django.db.backends':{
-        'level': 'DEBUG',
-        'handlers': ['console']
-        },
+    'root': {
+        'handlers': [
+            'console',
+            'logfile',
+        ],
+        'level': 'INFO',
     },
 }
