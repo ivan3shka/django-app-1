@@ -18,7 +18,16 @@ from django.urls import reverse_lazy
 
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.settings import SPECTACULAR_DEFAULTS
+import sentry_sdk
 
+sentry_sdk.init(
+    dsn="https://301b413cadedfadf762833a003dcf70b@o4508819325976576.ingest.us.sentry.io/4508819338035200",
+    send_default_pii=True,
+    traces_sample_rate=1.0,
+    _experiments={
+        "continuous_profiling_auto_start": True,
+    },
+)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -58,6 +67,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admindocs',
+    'django.contrib.sitemaps',
 
     'rest_framework',
     'django_filters',

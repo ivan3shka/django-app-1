@@ -21,6 +21,11 @@
                         {{ tag.name }}
                     {% endfor %}
                 </p>
+                <p>
+                    <a href="{% url 'blogapp:articles' pk=article.pk %}">
+                        View more
+                    </a>
+                </p>
             </li>
             {% endfor %}
         {% else %}

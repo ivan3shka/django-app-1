@@ -4,11 +4,16 @@
 Разные view интернет-магазина по товарам, заказам и тд
 """
 import logging
+from csv import DictWriter
+
+from django.contrib.syndication.views import Feed
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, \
     Http404, JsonResponse
+from django.http.multipartparser import MultiPartParser
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
+from django.utils.deprecation import DeprecationInstanceCheck
 from django.views.generic import (
                                 ListView,
                                 DetailView,
@@ -16,7 +21,10 @@ from django.views.generic import (
                                 UpdateView,
                                 DeleteView,
                                 )
+from rest_framework.request import Request
+from rest_framework.response import Response
 
+from bookapp.common import save_csv_books
 from bookapp.forms import GroupForm, BookForm
 from bookapp.models import Books, Order, BookImage
 
@@ -27,6 +35,12 @@ from django.contrib.auth.mixins import (LoginRequiredMixin, # нельзя по�
                                         )
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
+"""
+from rest_framework.decorators import action - можно подключить любую view 
+функцию к ViewSet
+"""
+
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from bookapp.serializers import BookSerializer, OrderSerializer
@@ -34,6 +48,23 @@ from bookapp.serializers import BookSerializer, OrderSerializer
 
 # Create your views here.
 log = logging.getLogger(__name__)
+
+class LatestBooksFeed(Feed):
+    title = 'Books (latest)'
+    description = 'Updates on changes and addition books'
+    link = reverse_lazy('bookapp:books_list')
+
+    def items(self):
+        return (Books.objects.filter(created_at__isnull=False)
+                .order_by('-created_at')[:5])
+
+    def item_title(self, item: Books):
+        return item.name
+
+    def item_description(self, item: Books):
+        return item.description[:100]
+
+
 
 @extend_schema(description='Books CRUD view')
 class BookViewSet(ModelViewSet):
@@ -62,6 +93,43 @@ class BookViewSet(ModelViewSet):
         'price',
         'discount',
     ]
+
+    @action(methods=['get'], detail=False)
+    def download_csv(self, request: Request):
+
+        response = HttpResponse(content='text/csv')
+        filename = 'books-export.csv'
+        response['Content-Disposition'] = (f'attachment;'
+                                           f' filename = {filename}')
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = [
+            'name',
+            'description',
+            'price',
+            'discount',
+        ]
+        queryset = queryset.only(*fields)
+        writer = DictWriter(response, fieldnames=fields)
+        writer.writeheader()
+        for book in queryset:
+            writer.writerow({
+                field: getattr(book, field)
+                for field in fields
+            })
+        return response
+
+
+    @action(detail=False,
+            methods=['post'],
+            parser_classes=[MultiPartParser])
+    def upload_csv(self, request: Request):
+        books = save_csv_books(
+            file=request.FILES['file'].file,
+            encoding=request.encoding
+        )
+        serializer = self.get_serializer(books, many=True)
+        return Response(serializer.data)
+
 
     @extend_schema(
         summary='get one book by id',
@@ -249,6 +317,9 @@ class BooksDataExportView(View):
             }
             for book in books
         ]
+        elem = books_data[0]
+        name = elem['name']
+        print('name: ', name)
         return JsonResponse({'books': books_data})
 
 

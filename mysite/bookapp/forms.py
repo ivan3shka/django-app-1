@@ -1,3 +1,4 @@
+from inspect import classify_class_attrs
 from symtable import Class
 
 from django import forms
@@ -44,4 +45,6 @@ class GroupForm(forms.ModelForm):
         model = Group
         fields = 'name',
 
+class CSVImportForm(forms.Form):
+    csv_file = forms.FileField()
 

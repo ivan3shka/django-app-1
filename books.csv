@@ -1,0 +1,3 @@
+name, price, discount, created_by
+'Book 10', 1231, 3, csvuser
+'Book 11', 1211, 11, csvuser11
