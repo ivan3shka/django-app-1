@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.functions import TruncYear
+from django.urls import reverse
 
 from django.utils.translation import gettext_lazy as _
 
@@ -37,6 +38,10 @@ class Books(models.Model):
 
     def __str__(self) -> str:
         return f'Books(pk={self.pk}, name={self.name!r})'
+
+    def get_absolut_url(self):
+        return reverse('bookapp:book_details',
+                       kwargs={'pk': self.pk})
 
 
 def books_images_directory_path(instance: 'BookImage', filename: str) -> str:

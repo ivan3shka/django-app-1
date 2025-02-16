@@ -21,6 +21,7 @@ from .views import (
     OrdersExportView,
     BookViewSet,
     OrderViewSet,
+    LatestBooksFeed,
 
 )
 
@@ -49,4 +50,5 @@ urlpatterns = [
          name='order_update'),
     path('orders/<int:pk>/confirm-delete/', DeleteOrderView.as_view(),
          name='order_delete'),
+    path('books/latest/feed/', LatestBooksFeed(), name='books_feed'),
 ]

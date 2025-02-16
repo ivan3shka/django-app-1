@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+    <object model="bookapp.books" pk="1">
+        <field name="name" type="CharField">Всадник без головы</field>
+        <field name="price" type="DecimalField">1000.00</field>
+        <field name="discount" type="SmallIntegerField">10</field>
+        <field name="created_at" type="DateTimeField">2025-01-13T12:53:59.773095+00:00</field>
+        <field name="archived" type="BooleanField">False</field>
+        <field name="description" type="TextField"></field>
+        <field name="created_by" rel="ManyToOneRel" to="auth.user">1</field>
+        <field name="preview" type="FileField"></field>
+    </object>
+    <object model="bookapp.books" pk="2">
+        <field name="name" type="CharField">Белый вождь</field>
+        <field name="price" type="DecimalField">700.00</field>
+        <field name="discount" type="SmallIntegerField">25</field>
+        <field name="created_at" type="DateTimeField">2025-01-13T12:53:59.773095+00:00</field>
+        <field name="archived" type="BooleanField">False</field>
+        <field name="description" type="TextField"></field>
+        <field name="created_by" rel="ManyToOneRel" to="auth.user">1</field>
+        <field name="preview" type="FileField"></field>
+    </object>
+    <object model="bookapp.books" pk="3">
+        <field name="name" type="CharField">Азбука</field>
+        <field name="price" type="DecimalField">500.00</field>
+        <field name="discount" type="SmallIntegerField">45</field>
+        <field name="created_at" type="DateTimeField">2025-01-13T12:53:59.773095+00:00</field>
+        <field name="archived" type="BooleanField">False</field>
+        <field name="description" type="TextField"></field>
+        <field name="created_by" rel="ManyToOneRel" to="auth.user">1</field>
+        <field name="preview" type="FileField"></field>
+    </object>
+    <object model="bookapp.books" pk="4">
+        <field name="name" type="CharField">Перси Джексон</field>
+        <field name="price" type="DecimalField">1231.00</field>
+        <field name="discount" type="SmallIntegerField">0</field>
+        <field name="created_at" type="DateTimeField">2025-01-18T01:38:13.945138+00:00</field>
+        <field name="archived" type="BooleanField">False</field>
+        <field name="description" type="TextField">Перси оказался немного Богом
+            Поэтому должен спасти мир
+        </field>
+        <field name="created_by" rel="ManyToOneRel" to="auth.user">1</field>
+        <field name="preview" type="FileField"></field>
+    </object>
+    <object model="bookapp.books" pk="6">
+        <field name="name" type="CharField">Гарри Поттер</field>
+        <field name="price" type="DecimalField">242.00</field>
+        <field name="discount" type="SmallIntegerField">2</field>
+        <field name="created_at" type="DateTimeField">2025-01-18T13:53:50.996143+00:00</field>
+        <field name="archived" type="BooleanField">False</field>
+        <field name="description" type="TextField">Книга о волшебнике</field>
+        <field name="created_by" rel="ManyToOneRel" to="auth.user">1</field>
+        <field name="preview" type="FileField"></field>
+    </object>
+    <object model="bookapp.books" pk="7">
+        <field name="name" type="CharField">Life of Pi</field>
+        <field name="price" type="DecimalField">1333.00</field>
+        <field name="discount" type="SmallIntegerField">33</field>
+        <field name="created_at" type="DateTimeField">2025-01-23T16:06:28.647446+00:00</field>
+        <field name="archived" type="BooleanField">False</field>
+        <field name="description" type="TextField">For school</field>
+        <field name="created_by" rel="ManyToOneRel" to="auth.user">1</field>
+        <field name="preview" type="FileField"></field>
+    </object>
+    <object model="bookapp.books" pk="10">
+        <field name="name" type="CharField">Book 1</field>
+        <field name="price" type="DecimalField">987.00</field>
+        <field name="discount" type="SmallIntegerField">90</field>
+        <field name="created_at" type="DateTimeField">2025-01-23T16:09:44.106686+00:00</field>
+        <field name="archived" type="BooleanField">False</field>
+        <field name="description" type="TextField">a new book</field>
+        <field name="created_by" rel="ManyToOneRel" to="auth.user">1</field>
+        <field name="preview" type="FileField"></field>
+    </object>
+    <object model="bookapp.books" pk="12">
+        <field name="name" type="CharField">Book Ex</field>
+        <field name="price" type="DecimalField">643.00</field>
+        <field name="discount" type="SmallIntegerField">34</field>
+        <field name="created_at" type="DateTimeField">2025-01-23T16:18:04.299562+00:00</field>
+        <field name="archived" type="BooleanField">False</field>
+        <field name="description" type="TextField">Try to save a new book</field>
+        <field name="created_by" rel="ManyToOneRel" to="auth.user">1</field>
+        <field name="preview" type="FileField"></field>
+    </object>
+    <object model="bookapp.books" pk="14">
+        <field name="name" type="CharField">2</field>
+        <field name="price" type="DecimalField">2.00</field>
+        <field name="discount" type="SmallIntegerField">20</field>
+        <field name="created_at" type="DateTimeField">2025-01-23T16:23:57.558832+00:00</field>
+        <field name="archived" type="BooleanField">True</field>
+        <field name="description" type="TextField">2</field>
+        <field name="created_by" rel="ManyToOneRel" to="auth.user">1</field>
+        <field name="preview" type="FileField"></field>
+    </object>
+    <object model="bookapp.books" pk="15">
+        <field name="name" type="CharField">from ivanyshka</field>
+        <field name="price" type="DecimalField">100.00</field>
+        <field name="discount" type="SmallIntegerField">12</field>
+        <field name="created_at" type="DateTimeField">2025-01-31T18:26:56.324485+00:00</field>
+        <field name="archived" type="BooleanField">False</field>
+        <field name="description" type="TextField">ivanyshka</field>
+        <field name="created_by" rel="ManyToOneRel" to="auth.user">6</field>
+        <field name="preview" type="FileField"></field>
+    </object>
+</django-objects>
