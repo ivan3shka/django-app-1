@@ -5,15 +5,18 @@
 """
 import logging
 from csv import DictWriter
-
+from random import random
 from django.contrib.syndication.views import Feed
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, \
     Http404, JsonResponse
 from django.http.multipartparser import MultiPartParser
 from django.shortcuts import render, redirect, reverse
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.deprecation import DeprecationInstanceCheck
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 from django.views.generic import (
                                 ListView,
                                 DetailView,
@@ -21,6 +24,7 @@ from django.views.generic import (
                                 UpdateView,
                                 DeleteView,
                                 )
+from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -48,6 +52,48 @@ from bookapp.serializers import BookSerializer, OrderSerializer
 
 # Create your views here.
 log = logging.getLogger(__name__)
+
+
+class ExportUserOrdersView(View):
+    def get(self, request, pk):
+        cache_key = f"user_orders_export_{pk}"
+        cached_data = cache.get(cache_key)
+
+        if cached_data:
+            return JsonResponse(cached_data, safe=False)
+
+        # Получаем пользователя или 404
+        user = get_object_or_404(User, id=pk)
+
+        # получаем заказы пользователя, сортируем по ID
+        orders = Order.objects.filter(user=user).order_by("pk")
+
+        serializer = OrderSerializer(orders, many=True)
+        serialized_data = serializer.data
+
+        # кешируем данные на 10 минут
+        cache.set(cache_key, serialized_data, timeout=600)
+
+        return JsonResponse(serialized_data, safe=False)
+
+
+class OrdersByUserView(LoginRequiredMixin, ListView):
+    template_name = 'bookapp/orders_by_user.html'
+    context_object_name = 'order'
+    queryset = (Order.objects.select_related('user').prefetch_related('books'))
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('pk')
+        self.owner = get_object_or_404(User,
+                                       id=user_id)  # проверяем, существует ли пользователь
+        return Order.objects.filter(user=self.owner).select_related(
+            'user').prefetch_related('books')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context['owner'] = self.owner  # передаём пользователя в контекст
+        return context
+
 
 class LatestBooksFeed(Feed):
     title = 'Books (latest)'
@@ -93,6 +139,17 @@ class BookViewSet(ModelViewSet):
         'price',
         'discount',
     ]
+
+    @method_decorator(cache_page(60 * 2))
+    def list(self, *args, **kwargs):
+        return super().list(*args, **kwargs)
+    """
+    def list - и возвращаем просто результат функции. Но зато смогли её 
+    обернуть - закешировать
+    это необходимо для rest_framework 
+    и можно @method_decorator(cache_page(60 * 2)) использовать чисто на методы
+    внутри класс view, тогда не надо добвлять ничего в urls
+    """
 
     @action(methods=['get'], detail=False)
     def download_csv(self, request: Request):
@@ -165,6 +222,7 @@ class OrderViewSet(ModelViewSet):
 
 
 class BookIndexView(View):
+    #@method_decorator(cache_page(60 * 2))
     def get(self, request: HttpRequest) -> HttpResponse:
         books = [('война и мир', 1000), ('всадник без головы', 500),
                  ('нарния', 700),
@@ -307,19 +365,20 @@ class DeleteOrderView(DeleteView):
 
 class BooksDataExportView(View):
     def get(self, request: HttpRequest) -> JsonResponse:
-        books = Books.objects.order_by('pk').all()
-        books_data = [
-            {
-            'pk': book.pk,
-            'name': book.name,
-            'price': book.price,
-            'archived': book.archived
-            }
-            for book in books
-        ]
-        elem = books_data[0]
-        name = elem['name']
-        print('name: ', name)
+        cache_key = 'books_data_export'
+        books_data = cache.get(cache_key)
+        if books_data is None:
+            books = Books.objects.order_by('pk').all()
+            books_data = [
+                {
+                'pk': book.pk,
+                'name': book.name,
+                'price': book.price,
+                'archived': book.archived
+                }
+                for book in books
+            ]
+            cache.set(cache_key, books_data, 300)
         return JsonResponse({'books': books_data})
 
 

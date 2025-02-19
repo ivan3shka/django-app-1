@@ -12,8 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+import django.core.cache.backends.filebased
 from django.conf.global_settings import LOGIN_REDIRECT_URL, MEDIA_URL, \
-    MEDIA_ROOT, LOCALE_PATHS, LOGGING, INTERNAL_IPS
+    MEDIA_ROOT, LOCALE_PATHS, LOGGING, INTERNAL_IPS, CACHES
 from django.urls import reverse_lazy
 
 from django.utils.translation import gettext_lazy as _
@@ -82,6 +83,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    #'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -95,6 +97,7 @@ MIDDLEWARE = [
     #'requestdataapp.middlewares.ThrottlingMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.admindocs.middleware.XViewMiddleware',
+    #'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -128,6 +131,20 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    'default':{
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        # 'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        # 'LOCATION': '/var/tmp/django_cache',
+    },
+}
+"""  
+DummyCache болванчик, не хранит в себе ничего, 
+реального кеширования с ним не произойдёт. Для того чтобы отключить 
+кеширование, но не чистить код 
+"""
+
+CACHES_MIDDLEWARE_SECONDS = 200
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
