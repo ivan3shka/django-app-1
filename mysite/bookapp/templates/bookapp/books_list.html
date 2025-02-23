@@ -36,11 +36,13 @@
                     <a href="{% url 'bookapp:create_book' %}">{% translate 'Create a new book' %}</a>
                 {% endif %}
             </div>
-        {% else %}
+        <div>
             {% url 'bookapp:create_book' as create_book_url %}
+            <a href="{{  create_book_url  }}">Create a new one</a>
+        </div>
+        {% else %}
             {% blocktranslate %}
                  <h3>No books</h3>
-                <a href="{{  create_book_url  }}">Create a new one</a>
             {% endblocktranslate %}
         {% endif %}
     </div>

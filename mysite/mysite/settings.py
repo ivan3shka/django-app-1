@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+from os import getenv
 import django.core.cache.backends.filebased
 from django.conf.global_settings import LOGIN_REDIRECT_URL, MEDIA_URL, \
     MEDIA_ROOT, LOCALE_PATHS, LOGGING, INTERNAL_IPS, CACHES
@@ -20,6 +20,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.settings import SPECTACULAR_DEFAULTS
 import sentry_sdk
+import logging.config
 
 sentry_sdk.init(
     dsn="https://301b413cadedfadf762833a003dcf70b@o4508819325976576.ingest.us.sentry.io/4508819338035200",
@@ -31,21 +32,29 @@ sentry_sdk.init(
 )
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+DATABASE_DIR = BASE_DIR / 'database'
+DATABASE_DIR.mkdir(exist_ok=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x*51(e$z0mj7=t43!&_)&o&&xh*ludug$qx-(fcp+pkkoc#$p3'
+SECRET_KEY = getenv(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-x*51(e$z0mj7=t43!&_)&o&&xh*ludug$qx-(fcp+pkkoc#$p3',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = getenv(
+    'DJANGO_DEBUG',
+    '0'
+) == '1'
 
 ALLOWED_HOSTS = [
     '0.0.0.0',
     '127.0.0.1',
-]
+] + getenv('DJANGO_ALLOWED_HOST', '').split(',')
+
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
@@ -127,7 +136,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': DATABASE_DIR / "db.sqlite3",
     }
 }
 
@@ -254,3 +263,31 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+LOGLEVEL = getenv('DJANGO_LOGLEVEL', 'info').upper()
+
+logging.config.dictConfig({
+    "version": 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(asctime)s [%(levelname)s] [%(name)s: %(lineno)s]'
+                      ' %(module)s %(message)s '
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+
+        },
+    },
+    'loggers': {
+        '': {
+            'level': LOGLEVEL,
+            'handlers': [
+                'console',
+            ],
+        },
+    },
+})

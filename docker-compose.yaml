@@ -5,16 +5,21 @@ services:
     build:
       dockerfile: "./Dockerfile"
     command:
-      - "python"
-      - "manage.py"
-      - "runserver"
-      - "0.0.0.0:8080"
+      - "gunicorn"
+      - "mysite.wsgi:application"
+      - "--bind"
+      - "0.0.0.0:8000"
     ports:
       - "8000:8080"
+    restart: always
     logging:
       driver: loki
       options:
         loki-url: http://localhost:3100/loki/api/v1/push
+    volumes:
+      - "./mysite/database:/app/database"
+    env_file:
+      - .env
 
   grafana:
     image: grafana/grafana:9.2.15
